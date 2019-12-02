@@ -16,7 +16,6 @@ import { IFacetSearchValuesListKlass } from './FacetSearchValuesList';
 import { FacetValueElement } from './FacetValueElement';
 import { ModalBox } from '../../ExternalModulesShim';
 import { SearchInterface } from '../SearchInterface/SearchInterface';
-import { ResponsiveComponentsUtils } from '../ResponsiveComponents/ResponsiveComponentsUtils';
 import { FacetValuesOrder } from './FacetValuesOrder';
 import 'styling/_FacetSearch';
 import { each, debounce, map, pluck } from 'underscore';
@@ -33,13 +32,13 @@ export class FacetSearch implements IFacetSearch {
   public moreValuesToFetch = true;
 
   private facetSearchTimeout: number;
-  private onResize: (...args: any[]) => void;
+  private onPositionChange: (...args: any[]) => void;
   private onDocumentClick: (e: Event) => void;
   private lastSearchWasEmpty = true;
 
   constructor(public facet: Facet, public facetSearchValuesListKlass: IFacetSearchValuesListKlass, private root: HTMLElement) {
     this.facetSearchElement = new FacetSearchElement(this);
-    this.onResize = debounce(() => {
+    this.onPositionChange = debounce(() => {
       // Mitigate issues in UT where the window in phantom js might get resized in the scope of another test.
       // These would point to random instance of a test karma object, and not a real search interface.
       if (this.facet instanceof Facet && this.facet.searchInterface instanceof SearchInterface) {
@@ -51,7 +50,8 @@ export class FacetSearch implements IFacetSearch {
     this.onDocumentClick = (e: Event) => {
       this.handleClickElsewhere(e);
     };
-    window.addEventListener('resize', this.onResize);
+    window.addEventListener('scroll', this.onPositionChange);
+    window.addEventListener('resize', this.onPositionChange);
     document.addEventListener('click', (e: Event) => this.onDocumentClick(e));
     $$(facet.root).on(InitializationEvents.nuke, () => this.handleNuke());
   }
@@ -220,7 +220,7 @@ export class FacetSearch implements IFacetSearch {
   }
 
   private shouldPositionSearchResults(): boolean {
-    return !ResponsiveComponentsUtils.isSmallFacetActivated($$(this.root)) && $$(this.facet.element).hasClass('coveo-facet-searching');
+    return $$(this.facet.element).hasClass('coveo-facet-searching');
   }
 
   private buildBaseSearch(): HTMLElement {
@@ -230,7 +230,8 @@ export class FacetSearch implements IFacetSearch {
   }
 
   private handleNuke() {
-    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('resize', this.onPositionChange);
+    window.removeEventListener('scroll', this.onPositionChange);
     document.removeEventListener('click', this.onDocumentClick);
   }
 
