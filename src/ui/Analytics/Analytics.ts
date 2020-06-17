@@ -16,6 +16,7 @@ import { NoopAnalyticsClient } from '../Analytics/NoopAnalyticsClient';
 import { LiveAnalyticsClient } from './LiveAnalyticsClient';
 import { MultiAnalyticsClient } from './MultiAnalyticsClient';
 import { IAnalyticsQueryErrorMeta, analyticsActionCauseList } from './AnalyticsActionListMeta';
+import { addActionCauseToList } from './AnalyticsUtils';
 import { RecommendationAnalyticsClient } from './RecommendationAnalyticsClient';
 import * as _ from 'underscore';
 import { exportGlobally } from '../../GlobalExports';
@@ -61,6 +62,7 @@ export class Analytics extends Component {
       PendingSearchEvent: PendingSearchEvent,
       PendingSearchAsYouTypeSearchEvent: PendingSearchAsYouTypeSearchEvent,
       analyticsActionCauseList: analyticsActionCauseList,
+      addActionCauseToList: addActionCauseToList,
       NoopAnalyticsClient: NoopAnalyticsClient,
       LiveAnalyticsClient: LiveAnalyticsClient,
       MultiAnalyticsClient: MultiAnalyticsClient,

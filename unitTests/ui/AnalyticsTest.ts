@@ -8,6 +8,7 @@ import { NoopAnalyticsClient } from '../../src/ui/Analytics/NoopAnalyticsClient'
 import { LiveAnalyticsClient } from '../../src/ui/Analytics/LiveAnalyticsClient';
 import { MultiAnalyticsClient } from '../../src/ui/Analytics/MultiAnalyticsClient';
 import { AnalyticsEvents, $$ } from '../../src/Core';
+import { addActionCauseToList } from '../../src/ui/Analytics/AnalyticsUtils';
 
 export function AnalyticsTest() {
   describe('Analytics', () => {
@@ -376,6 +377,17 @@ export function AnalyticsTest() {
 
           expect(analyticsClient().splitTestRunVersion).toBe('foobar');
         });
+      });
+    });
+    describe('utilities methods', () => {
+      it('can add new actionCauseList', () => {
+        const testActionCauseList = { ...analyticsActionCauseList };
+        const testActionCause = {
+          name: 'testActionCause',
+          type: 'test'
+        };
+        addActionCauseToList(testActionCause, testActionCauseList);
+        expect(testActionCauseList[testActionCause.name]).toBe(testActionCause);
       });
     });
   });
